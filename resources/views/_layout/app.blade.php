@@ -11,9 +11,11 @@
     <!-- Header Navbar Biru Khas SmartSekolah Persis Foto -->
     <header class="navbar">
         <div class="navbar-container">
-            <a href="{{ url('/siswa') }}" class="navbar-brand">SmartSekolah</a>
+            <a href="{{ url('/jurusan') }}" class="navbar-brand">SmartSekolah</a>
             <ul class="navbar-menu">
-                <li><a href="{{ url('/siswa') }}" class="{{ request()->is('siswa*') || request()->is('/') ? 'active' : '' }}">Data Siswa</a></li>
+                <li><a href="{{ url('/jurusan') }}" class="{{ request()->is('jurusan*') || request()->is('/') ? 'active' : '' }}">Jurusan</a></li>
+                <li><a href="{{ url('/kategori-guru') }}" class="{{ request()->is('kategori-guru*') ? 'active' : '' }}">Kategori Guru</a></li>
+                <li><a href="{{ url('/siswa') }}" class="{{ request()->is('siswa*') ? 'active' : '' }}">Data Siswa</a></li>
             </ul>
         </div>
     </header>

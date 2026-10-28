@@ -1,26 +1,34 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JurusanController;
+use App\Http\Controllers\KategoriGuruController;
 use App\Http\Controllers\SiswaController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes - Pertemuan 14 (CRUD Data Siswa)
-|--------------------------------------------------------------------------
-| Seluruh rute tampilan CRUD Data Siswa dibuat lengkap:
-| - GET    /              -> Daftar Siswa (Index)
-| - GET    /siswa         -> Daftar Siswa (Index)
-| - GET    /siswa/create  -> Form Tambah Siswa (Create)
-| - POST   /siswa         -> Proses Simpan Siswa (Store)
-| - GET    /siswa/{id}    -> Rincian Siswa (Show)
-| - GET    /siswa/{id}/edit -> Form Ubah Siswa (Edit)
-| - PUT    /siswa/{id}    -> Proses Update Siswa (Update)
-| - DELETE /siswa/{id}    -> Proses Hapus Siswa (Destroy)
+| Web Routes - Pertemuan 14 (CRUD Database MySQL)
 |--------------------------------------------------------------------------
 */
 
-// Redirect / default route ke tampilan data siswa
-Route::get('/', [SiswaController::class, 'index'])->name('home');
+// Default route
+Route::get('/', [JurusanController::class, 'index'])->name('home');
+
+// Routes CRUD Jurusan (Query Builder)
+Route::get('/jurusan', [JurusanController::class, 'index'])->name('jurusan.index');
+Route::get('/jurusan/create', [JurusanController::class, 'create'])->name('jurusan.create');
+Route::post('/jurusan', [JurusanController::class, 'prosesSimpan'])->name('jurusan.store');
+Route::get('/jurusan/{id}/edit', [JurusanController::class, 'edit'])->name('jurusan.edit');
+Route::put('/jurusan/{id}', [JurusanController::class, 'prosesEdit'])->name('jurusan.update');
+Route::delete('/jurusan/{id}', [JurusanController::class, 'prosesHapus'])->name('jurusan.destroy');
+
+// Routes CRUD Kategori Guru (Tugas Praktikum - Query Builder)
+Route::get('/kategori-guru', [KategoriGuruController::class, 'index'])->name('kategori-guru.index');
+Route::get('/kategori-guru/create', [KategoriGuruController::class, 'create'])->name('kategori-guru.create');
+Route::post('/kategori-guru', [KategoriGuruController::class, 'prosesSimpan'])->name('kategori-guru.store');
+Route::get('/kategori-guru/{id}/edit', [KategoriGuruController::class, 'edit'])->name('kategori-guru.edit');
+Route::put('/kategori-guru/{id}', [KategoriGuruController::class, 'prosesEdit'])->name('kategori-guru.update');
+Route::delete('/kategori-guru/{id}', [KategoriGuruController::class, 'prosesHapus'])->name('kategori-guru.destroy');
 
 // Routes CRUD Siswa
 Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');

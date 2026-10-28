@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview Tampilan CRUD Siswa (HTML & CSS Murni)</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS Murni -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* Preview Toolbar khusus untuk berpindah tampilan seketika */
+        .preview-bar {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 0.65rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        .preview-tabs {
+            display: flex;
+            gap: 0.4rem;
+        }
+        .preview-tab-btn {
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        .preview-tab-btn:hover {
+            background: #334155;
+            color: #ffffff;
+        }
+        .preview-tab-btn.active {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #3b82f6;
+            font-weight: 600;
+        }
+        .view-section {
+            display: none;
+        }
+        .view-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Bar Navigasi Khusus Mode Preview -->
+    <aside class="preview-bar">
+        <div>
+            <strong>Mode Preview Tampilan CRUD</strong> &bull; Pertemuan 14 (HTML + CSS)
+        </div>
+        <div class="preview-tabs">
+            <button class="preview-tab-btn active" onclick="switchView('view-index')">1. Daftar Siswa (Index)</button>
+            <button class="preview-tab-btn" onclick="switchView('view-create')">2. Form Tambah (Create)</button>
+            <button class="preview-tab-btn" onclick="switchView('view-edit')">3. Form Edit (Edit)</button>
+            <button class="preview-tab-btn" onclick="switchView('view-show')">4. Detail Siswa (Show)</button>
+        </div>
+    </aside>
+
+    <!-- Header & Navigasi -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="navbar-brand" onclick="switchView('view-index')">
+                <span class="brand-icon">🎓</span>
+                <span>Data Siswa</span>
+            </a>
+
+            <nav>
+                <ul class="navbar-nav">
+                    <li>
+                        <a href="javascript:void(0)" class="nav-link active" id="nav-list" onclick="switchView('view-index')">
+                            Daftar Siswa
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" class="nav-link" id="nav-add" onclick="switchView('view-create')">
+                            + Tambah Siswa
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Konten Utama -->
+    <main class="main-wrapper">
+
+        <!-- ========================================== -->
+        <!-- 1. VIEW INDEX (TABEL DATA SISWA)           -->
+        <!-- ========================================== -->
+        <section id="view-index" class="view-section active">
+            <div class="breadcrumb">
+                <a href="#">Beranda</a>
+                <span>&rsaquo;</span>
+                <span>Data Siswa</span>
+            </div>
+
+            <div class="page-header">
+                <div class="page-title-group">
+                    <h1>Daftar Data Siswa</h1>
+                    <p class="page-subtitle">Kelola dan pantau seluruh data identitas siswa dalam sistem</p>
+                </div>
+                <div>
+                    <button class="btn btn-primary" onclick="switchView('view-create')">
+                        <span>➕</span> Tambah Siswa Baru
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kartu Statistik -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">👥</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Total Siswa</div>
+                        <div class="stat-value">12</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon sky">👦</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Siswa Laki-laki</div>
+                        <div class="stat-value">6</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon pink">👧</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Siswa Perempuan</div>
+                        <div class="stat-value">6</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">🏫</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Total Kelas</div>
+                        <div class="stat-value">4</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Data Siswa -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-header-title">Tabel Master Siswa</h2>
+                    </div>
+                    <div class="toolbar-group">
+                        <div class="search-box">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="previewSearch" placeholder="Cari nama atau NISN..." onkeyup="filterPreviewTable()">
+                        </div>
+                        <select class="form-select" id="previewKelasFilter" style="width: auto; padding: 0.45rem 0.75rem; font-size: 0.875rem;" onchange="filterPreviewTable()">
+                            <option value="">Semua Kelas</option>
+                            <option value="X RPL 1">X RPL 1</option>
+                            <option value="X RPL 2">X RPL 2</option>
+                            <option value="XI RPL 1">XI RPL 1</option>
+                            <option value="XI RPL 2">XI RPL 2</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table" id="previewTable">
+                        <thead>
+                            <tr>
+                                <th class="table-row-num">No</th>
+                                <th>NISN</th>
+                                <th>Nama Lengkap</th>
+                                <th>Jenis Kelamin</th>
+                                <th>Tanggal Lahir</th>
+                                <th>Kelas</th>
+                                <th>Alamat</th>
+                                <th style="text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="table-row-num">1</td>
+                                <td><span class="student-nisn">0098765433</span></td>
+                                <td><strong class="student-name">VELIK</strong></td>
+                                <td><span class="badge badge-gender-p">👧 Perempuan</span></td>
+                                <td>12 Jul 2009</td>
+                                <td><span class="badge badge-class">X RPL 2</span></td>
+                                <td><span class="student-address" title="Kasiyan">Kasiyan</span></td>
+                                <td style="text-align: center;">
+                                    <div class="btn-group">
+                                        <button class="btn btn-secondary btn-sm" onclick="switchView('view-show')">👁️ Detail</button>
+                                        <button class="btn btn-warning btn-sm" onclick="switchView('view-edit')">✏️ Edit</button>
+                                        <button class="btn btn-danger btn-sm" onclick="alert('Simulasi Hapus: Siswa VELIK')">🗑️ Hapus</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="table-row-num">2</td>
+                                <td><span class="student-nisn">0098765428</span></td>
+                                <td><strong class="student-name">Budi Santoso</strong></td>
+                                <td><span class="badge badge-gender-l">👦 Laki-laki</span></td>
+                                <td>15 Mar 2009</td>
+                                <td><span class="badge badge-class">X RPL 1</span></td>
+                                <td><span class="student-address" title="Jl. Melati No. 7">Jl. Melati No. 7</span></td>
+                                <td style="text-align: center;">
+                                    <div class="btn-group">
+                                        <button class="btn btn-secondary btn-sm" onclick="switchView('view-show')">👁️ Detail</button>
+                                        <button class="btn btn-warning btn-sm" onclick="switchView('view-edit')">✏️ Edit</button>
+                                        <button class="btn btn-danger btn-sm" onclick="alert('Simulasi Hapus')">🗑️ Hapus</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="table-row-num">3</td>
+                                <td><span class="student-nisn">0098765434</span></td>
+                                <td><strong class="student-name">Agus Santoso</strong></td>
+                                <td><span class="badge badge-gender-l">👦 Laki-laki</span></td>
+                                <td>15 Mar 2009</td>
+                                <td><span class="badge badge-class">X RPL 1</span></td>
+                                <td><span class="student-address" title="Jl. Melati No. 7">Jl. Melati No. 7</span></td>
+                                <td style="text-align: center;">
+                                    <div class="btn-group">
+                                        <button class="btn btn-secondary btn-sm" onclick="switchView('view-show')">👁️ Detail</button>
+                                        <button class="btn btn-warning btn-sm" onclick="switchView('view-edit')">✏️ Edit</button>
+                                        <button class="btn btn-danger btn-sm" onclick="alert('Simulasi Hapus')">🗑️ Hapus</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="table-row-num">4</td>
+                                <td><span class="student-nisn">0098765435</span></td>
+                                <td><strong class="student-name">Rina Putri</strong></td>
+                                <td><span class="badge badge-gender-p">👧 Perempuan</span></td>
+                                <td>20 Nov 2009</td>
+                                <td><span class="badge badge-class">XI RPL 1</span></td>
+                                <td><span class="student-address" title="Jl. Anggrek No. 2">Jl. Anggrek No. 2</span></td>
+                                <td style="text-align: center;">
+                                    <div class="btn-group">
+                                        <button class="btn btn-secondary btn-sm" onclick="switchView('view-show')">👁️ Detail</button>
+                                        <button class="btn btn-warning btn-sm" onclick="switchView('view-edit')">✏️ Edit</button>
+                                        <button class="btn btn-danger btn-sm" onclick="alert('Simulasi Hapus')">🗑️ Hapus</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="table-row-num">5</td>
+                                <td><span class="student-nisn">1001</span></td>
+                                <td><strong class="student-name">Ahmad Fauzi Pratama</strong></td>
+                                <td><span class="badge badge-gender-l">👦 Laki-laki</span></td>
+                                <td>10 Mei 2006</td>
+                                <td><span class="badge badge-class">XI RPL 2</span></td>
+                                <td><span class="student-address" title="Jl. Mawar No. 1">Jl. Mawar No. 1</span></td>
+                                <td style="text-align: center;">
+                                    <div class="btn-group">
+                                        <button class="btn btn-secondary btn-sm" onclick="switchView('view-show')">👁️ Detail</button>
+                                        <button class="btn btn-warning btn-sm" onclick="switchView('view-edit')">✏️ Edit</button>
+                                        <button class="btn btn-danger btn-sm" onclick="alert('Simulasi Hapus')">🗑️ Hapus</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="table-row-num">6</td>
+                                <td><span class="student-nisn">1002</span></td>
+                                <td><strong class="student-name">Dewi Lestari</strong></td>
+                                <td><span class="badge badge-gender-p">👧 Perempuan</span></td>
+                                <td>15 Agu 2006</td>
+                                <td><span class="badge badge-class">XI RPL 2</span></td>
+                                <td><span class="student-address" title="Jl. Melati No. 2">Jl. Melati No. 2</span></td>
+                                <td style="text-align: center;">
+                                    <div class="btn-group">
+                                        <button class="btn btn-secondary btn-sm" onclick="switchView('view-show')">👁️ Detail</button>
+                                        <button class="btn btn-warning btn-sm" onclick="switchView('view-edit')">✏️ Edit</button>
+                                        <button class="btn btn-danger btn-sm" onclick="alert('Simulasi Hapus')">🗑️ Hapus</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card-footer">
+                    <span style="font-size: 0.85rem; color: var(--color-text-muted);">
+                        Menampilkan <strong>6</strong> dari <strong>12</strong> data siswa
+                    </span>
+                    <ul class="pagination">
+                        <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 2. VIEW CREATE (FORM TAMBAH SISWA)         -->
+        <!-- ========================================== -->
+        <section id="view-create" class="view-section">
+            <div class="breadcrumb">
+                <a href="javascript:void(0)" onclick="switchView('view-index')">Beranda</a>
+                <span>&rsaquo;</span>
+                <a href="javascript:void(0)" onclick="switchView('view-index')">Data Siswa</a>
+                <span>&rsaquo;</span>
+                <span>Tambah Siswa</span>
+            </div>
+
+            <div class="page-header">
+                <div class="page-title-group">
+                    <h1>Tambah Siswa Baru</h1>
+                    <p class="page-subtitle">Isi formulir di bawah ini dengan lengkap untuk menambahkan data siswa baru</p>
+                </div>
+                <div>
+                    <button class="btn btn-secondary" onclick="switchView('view-index')">
+                        <span>&larr;</span> Kembali ke Daftar
+                    </button>
+                </div>
+            </div>
+
+            <div class="card form-card">
+                <div class="card-header">
+                    <h2 class="card-header-title">Formulir Data Siswa</h2>
+                </div>
+
+                <div class="card-body">
+                    <form onsubmit="event.preventDefault(); alert('Simulasi Sukses: Data Siswa Disimpan!'); switchView('view-index');">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="c_nisn" class="form-label">NISN <span class="required">*</span></label>
+                                <input type="text" id="c_nisn" class="form-control" placeholder="Contoh: 0098765433" required maxlength="20">
+                                <span class="form-hint">Nomor Induk Siswa Nasional</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="c_nama" class="form-label">Nama Lengkap <span class="required">*</span></label>
+                                <input type="text" id="c_nama" class="form-control" placeholder="Contoh: Muhammad Budi" required maxlength="100">
+                            </div>
+
+                            <div class="form-group col-full">
+                                <label class="form-label">Jenis Kelamin <span class="required">*</span></label>
+                                <div class="gender-options">
+                                    <label class="gender-radio-label">
+                                        <input type="radio" name="c_jk" value="L" checked>
+                                        <span>👦 Laki-laki (L)</span>
+                                    </label>
+                                    <label class="gender-radio-label">
+                                        <input type="radio" name="c_jk" value="P">
+                                        <span>👧 Perempuan (P)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="c_tgl" class="form-label">Tanggal Lahir <span class="required">*</span></label>
+                                <input type="date" id="c_tgl" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="c_kelas" class="form-label">Pilihan Kelas <span class="required">*</span></label>
+                                <select id="c_kelas" class="form-select" required>
+                                    <option value="">-- Pilih Kelas Siswa --</option>
+                                    <option value="1">X RPL 1</option>
+                                    <option value="2">X RPL 2</option>
+                                    <option value="3">XI RPL 1</option>
+                                    <option value="4">XI RPL 2</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-full">
+                                <label for="c_alamat" class="form-label">Alamat Tempat Tinggal <span class="required">*</span></label>
+                                <textarea id="c_alamat" class="form-control" placeholder="Contoh: Jl. Melati No. 7, Dusun Kasiyan" rows="3" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="switchView('view-index')">Batal</button>
+                            <button type="submit" class="btn btn-success">
+                                <span>💾</span> Simpan Data Siswa
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 3. VIEW EDIT (FORM UBAH SISWA)             -->
+        <!-- ========================================== -->
+        <section id="view-edit" class="view-section">
+            <div class="breadcrumb">
+                <a href="javascript:void(0)" onclick="switchView('view-index')">Beranda</a>
+                <span>&rsaquo;</span>
+                <a href="javascript:void(0)" onclick="switchView('view-index')">Data Siswa</a>
+                <span>&rsaquo;</span>
+                <span>Edit Siswa: VELIK</span>
+            </div>
+
+            <div class="page-header">
+                <div class="page-title-group">
+                    <h1>Edit Data Siswa</h1>
+                    <p class="page-subtitle">Perbarui informasi identitas siswa yang terdaftar</p>
+                </div>
+                <div>
+                    <button class="btn btn-secondary" onclick="switchView('view-index')">
+                        <span>&larr;</span> Kembali ke Daftar
+                    </button>
+                </div>
+            </div>
+
+            <div class="card form-card">
+                <div class="card-header">
+                    <h2 class="card-header-title">Ubah Rincian: VELIK</h2>
+                    <span class="badge badge-class">ID Siswa #1</span>
+                </div>
+
+                <div class="card-body">
+                    <form onsubmit="event.preventDefault(); alert('Simulasi Sukses: Data Siswa Diperbarui!'); switchView('view-index');">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="e_nisn" class="form-label">NISN <span class="required">*</span></label>
+                                <input type="text" id="e_nisn" class="form-control" value="0098765433" required maxlength="20">
+                                <span class="form-hint">Nomor Induk Siswa Nasional</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="e_nama" class="form-label">Nama Lengkap <span class="required">*</span></label>
+                                <input type="text" id="e_nama" class="form-control" value="VELIK" required maxlength="100">
+                            </div>
+
+                            <div class="form-group col-full">
+                                <label class="form-label">Jenis Kelamin <span class="required">*</span></label>
+                                <div class="gender-options">
+                                    <label class="gender-radio-label">
+                                        <input type="radio" name="e_jk" value="L">
+                                        <span>👦 Laki-laki (L)</span>
+                                    </label>
+                                    <label class="gender-radio-label">
+                                        <input type="radio" name="e_jk" value="P" checked>
+                                        <span>👧 Perempuan (P)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="e_tgl" class="form-label">Tanggal Lahir <span class="required">*</span></label>
+                                <input type="date" id="e_tgl" class="form-control" value="2009-07-12" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="e_kelas" class="form-label">Pilihan Kelas <span class="required">*</span></label>
+                                <select id="e_kelas" class="form-select" required>
+                                    <option value="1">X RPL 1</option>
+                                    <option value="2" selected>X RPL 2</option>
+                                    <option value="3">XI RPL 1</option>
+                                    <option value="4">XI RPL 2</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-full">
+                                <label for="e_alamat" class="form-label">Alamat Tempat Tinggal <span class="required">*</span></label>
+                                <textarea id="e_alamat" class="form-control" rows="3" required>Kasiyan</textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="switchView('view-index')">Batal</button>
+                            <button type="submit" class="btn btn-primary">
+                                <span>🔄</span> Perbarui Data Siswa
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 4. VIEW SHOW (DETAIL PROFIL SISWA)         -->
+        <!-- ========================================== -->
+        <section id="view-show" class="view-section">
+            <div class="breadcrumb">
+                <a href="javascript:void(0)" onclick="switchView('view-index')">Beranda</a>
+                <span>&rsaquo;</span>
+                <a href="javascript:void(0)" onclick="switchView('view-index')">Data Siswa</a>
+                <span>&rsaquo;</span>
+                <span>Detail Siswa</span>
+            </div>
+
+            <div class="page-header">
+                <div class="page-title-group">
+                    <h1>Rincian Profil Siswa</h1>
+                    <p class="page-subtitle">Informasi lengkap data siswa yang terdaftar dalam sistem sekolah</p>
+                </div>
+                <div>
+                    <button class="btn btn-secondary" onclick="switchView('view-index')">
+                        <span>&larr;</span> Kembali ke Daftar
+                    </button>
+                </div>
+            </div>
+
+            <div class="card detail-card">
+                <div class="card-body">
+                    <div class="detail-header">
+                        <div class="detail-avatar female">👧</div>
+                        <div class="detail-title">
+                            <h2>VELIK</h2>
+                            <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 0.35rem;">
+                                <span class="student-nisn">NISN: 0098765433</span>
+                                <span class="badge badge-gender-p">Perempuan</span>
+                                <span class="badge badge-class">X RPL 2</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Nomor Induk Siswa Nasional (NISN)</div>
+                            <div class="detail-value"><code>0098765433</code></div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">Nama Lengkap Siswa</div>
+                            <div class="detail-value">VELIK</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">Jenis Kelamin</div>
+                            <div class="detail-value">Perempuan (P)</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">Tanggal Lahir</div>
+                            <div class="detail-value">12 Juli 2009</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">Rombongan Belajar / Kelas</div>
+                            <div class="detail-value">X RPL 2</div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-label">ID Database Sistem</div>
+                            <div class="detail-value">#1</div>
+                        </div>
+
+                        <div class="detail-item full">
+                            <div class="detail-label">Alamat Tempat Tinggal</div>
+                            <div class="detail-value">Kasiyan</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button class="btn btn-secondary" onclick="switchView('view-index')">
+                        <span>&larr;</span> Kembali
+                    </button>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-warning" onclick="switchView('view-edit')">
+                            <span>✏️</span> Edit Siswa Ini
+                        </button>
+                        <button class="btn btn-danger" onclick="alert('Simulasi Hapus Siswa: VELIK')">
+                            <span>🗑️</span> Hapus
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Pertemuan 14 &mdash; Praktikum CRUD Laravel &bull; Basis Data Siswa &copy; 2026</p>
+    </footer>
+
+    <!-- Script Tab Switcher Khusus Halaman Preview -->
+    <script>
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.preview-tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            const targetSection = document.getElementById(viewId);
+            if (targetSection) targetSection.classList.add('active');
+
+            // Update tab button active state
+            const tabMap = {
+                'view-index': 0,
+                'view-create': 1,
+                'view-edit': 2,
+                'view-show': 3
+            };
+            const btns = document.querySelectorAll('.preview-tab-btn');
+            if (btns[tabMap[viewId]]) {
+                btns[tabMap[viewId]].classList.add('active');
+            }
+
+            // Update navbar active state
+            const navList = document.getElementById('nav-list');
+            const navAdd = document.getElementById('nav-add');
+            if (viewId === 'view-create') {
+                navAdd.classList.add('active');
+                navList.classList.remove('active');
+            } else {
+                navList.classList.add('active');
+                navAdd.classList.remove('active');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterPreviewTable() {
+            const searchInput = document.getElementById('previewSearch').value.toLowerCase();
+            const filterKelas = document.getElementById('previewKelasFilter').value.toLowerCase();
+            const table = document.getElementById('previewTable');
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                if (cells.length < 7) continue;
+
+                const nisnText = cells[1].textContent.toLowerCase();
+                const namaText = cells[2].textContent.toLowerCase();
+                const kelasText = cells[5].textContent.toLowerCase();
+
+                const matchesSearch = nisnText.includes(searchInput) || namaText.includes(searchInput);
+                const matchesKelas = filterKelas === '' || kelasText.includes(filterKelas);
+
+                if (matchesSearch && matchesKelas) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
